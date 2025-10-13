@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标题</title>
+    <style>
+        :root{
+            color-scheme: dark light;
+        }
+    </style>
+</head>
+<body style="overflow: hidden;">
+    <div style="display: flex; position: absolute; height: 100vh; width: 100vw;">
+        <div id="app" style="overflow-y: auto;"></div>
+        <div style="flex:1; width: 0; display: flex;">
+            <iframe name="ifr" src="" frameborder="0" style="flex:1"></iframe>
+        </div>
+    </div>
+    <script>
+        const data = /*"DATA-PLACEHOLDER"*/[]/*"DATA-PLACEHOLDER"*/;
+
+        var ifr = document.getElementsByName('ifr')[0]
+        tree(document.getElementById('app'),data)
+
+        // 2. 绑定 hashchange 事件
+        window.addEventListener('hashchange', handleHashChange);
+        handleHashChange()
+
+        function tree(el,list,level){
+            level=level||0;
+            list = list || []
+            var rev = [];
+            var root = document.createElement('div')
+            for(var i=0;i<list.length;i++){
+                if(list[i].type==='directory' && list[i].children.length===0){
+                    continue;
+                }
+                root.append(treeItem(el,list[i],level))
+            }
+            el.append(root)
+        }
+
+        function treeItem(el,item,level){
+            level=level||0;
+            var root = document.createElement('div')
+            var title = document.createElement('div')
+            var a = document.createElement('a')
+            a.href='#'+item.path+(item.type==='directory'?'/index.html':'')
+            a.innerText = item.name
+            //a.target="ifr"
+            title.append(a);
+            title.style.paddingLeft = (level * 20)+'px'
+            root.append(title)
+
+            if(item.children && item.children.length){
+                title.append(item.children.length.toString())
+                tree(root,item.children,level+1)
+            }
+
+            return root;
+        }
+
+        // 1. 定义 hash 变化时的处理函数
+        function handleHashChange() {
+            console.log('当前 hash 值：', window.location.hash); // 获取最新 hash
+            ifr.src=window.location.hash.replace('#','')
+        }
+
+
+    </script>
+</body>
+</html>

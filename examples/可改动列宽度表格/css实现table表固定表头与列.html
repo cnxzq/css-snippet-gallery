@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>css实现table表固定表头与列</title>
+  <style>
+    .wrap {
+      height: 500px;
+      width: 500px;
+      overflow: auto;
+    }
+    .table {
+      border-collapse: collapse;
+    }
+    .table td, .table th {
+      border: 1px solid #ccc;
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+
+    /* 固定表头 */
+    .table thead th {
+      background: #e3e5e8;
+    }
+    .table thead {
+      position: sticky;
+      top: 0;
+      /* 高于固定列是td的z-index防止，td压盖th */
+      z-index: 2; 
+      /* .5px这里还没有弄明白原因，如果写1px的话会显得很粗 */
+      box-shadow: 0 -1px #ccc, 0 .5px #ccc;
+    }
+
+    /* 固定列 */
+    .table tbody td {
+      background: #fff;
+    }
+
+    .table thead th:first-child,
+    .table thead th:last-child {
+      z-index: 2;
+    }
+
+    .table tbody td:first-child,
+    .table tbody td:last-child {
+      z-index: 1;
+    }
+
+    .table thead th:first-child,
+    .table tbody td:first-child {
+      left: 0;
+    }
+
+    .table thead th:last-child,
+    .table tbody td:last-child {
+      /* 注意这里是1px，不是0，因为table与父容器之间有1px间隙，设置为0时会出现轻微的移动 */
+      right: 1px;
+    }
+
+    .table thead th:first-child,
+    .table thead th:last-child,
+    .table tbody td:first-child,
+    .table tbody td:last-child{
+      position: sticky;
+      filter: drop-shadow(1px 0 0 #ccc) drop-shadow(-1px 0 0 #ccc);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <table class="table" id="resizeMe">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  
+  <!-- 创建表格内容 -->
+  <script>
+    const thead = document.getElementById('thead')
+    const thr = document.createElement('tr')
+
+    const tbody = document.getElementById('tbody')
+    // 表头
+    for (let i = 0; i < 12; i++) {
+      const th = document.createElement('th')
+      th.innerText = `column ${i + 1}`
+      thr.appendChild(th)
+    }
+    thead.appendChild(thr)
+
+    for (let i = 0; i < 24; i++) {
+      const tbr = document.createElement('tr')
+      for (let j = 0; j < 12; j++) {
+        const td = document.createElement('td')
+        td.innerText = `内容 ${i + 1}-${j + 1}`
+        tbr.appendChild(td)
+      }
+      tbody.appendChild(tbr)
+    }
+  </script>
+</body>
+</html>

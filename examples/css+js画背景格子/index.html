@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html,body {
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 100vw;
+      height: 100vh;
+      /* 上下中间空隙有24份,中间间隔安10算的 */
+      /* background:
+        repeating-linear-gradient(to right, #998aff80 0 10px, transparent 0 4.144965%),
+        repeating-linear-gradient(#8ae8ff80 0 10px, transparent 0 4.144965%); */
+    }
+  </style>
+</head>
+<body>
+  <div class="container"></div>
+  <script>
+    const container = document.querySelector('.container');
+    const margin = [10, 10];
+    function setGridBg() {
+      const { width, height } = container.getBoundingClientRect();
+      const widthCell = ((width - margin[1]) / 24) / width * 100
+      const heightCell = ((height - margin[0]) / 24) / height * 100
+      container.style.background = `
+        repeating-linear-gradient(to right, #998aff80 0 ${margin[1]}px, transparent 0 ${widthCell}%),
+        repeating-linear-gradient(#8ae8ff80 0 ${margin[0]}px, transparent 0 ${heightCell}%)
+      `
+      // container.style.background = 'red'
+    }
+    window.addEventListener('load', setGridBg)
+    window.addEventListener('resize', setGridBg)
+  </script>
+</body>
+</html>

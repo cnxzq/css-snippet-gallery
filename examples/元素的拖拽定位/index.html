@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .container {
+      width: 200px;
+      padding: 20px;
+      border: 1px solid #000;
+      background: greenyellow;
+    }
+    .container2 {
+      position: absolute;
+      padding: 20px;
+      top: 300px;
+      left: 100px;
+      border: 1px solid #000;
+      background: rebeccapurple;
+    }
+    [draggable] {
+      cursor: move;
+    }
+  </style>
+</head>
+<body>
+  <div class="container draggable" draggable="true">
+    <p>示例文字示例文字示例文字示例文字示例文字示例文字示例文字示例文字示例文字示例文字</p>
+  </div>
+  <div class="container2 draggable" draggable="true">
+    <p>示例文字2</p>
+  </div>
+  <script>
+    // 尚未实现，当前实现方式需要点击左上角才正确，有很大问题
+    const nodeList = document.getElementsByClassName('draggable');
+    console.log(nodeList);
+    [...nodeList].forEach(el => {
+      el.addEventListener('dragstart', (e)=> {
+        e.dataTransfer.clientX = e.clientX
+        e.dataTransfer.clientY = e.clientY
+      })
+      el.addEventListener('dragend', (e)=> {
+        const { clientX, clientY, dataTransfer: {clientX: scx,clientY: scy} } = e
+        const [ tX, tY ] = (el.style.transform || '').match(/-?\d+/g) || [0, 0]
+        console.log(tX, tY);
+        el.style.transform = `translate(${+tX + clientX - scx}px, ${+tY + clientY - scy}px)`
+      })
+    });
+  </script>
+</body>
+</html>

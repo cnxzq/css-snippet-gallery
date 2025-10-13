@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .wrap {
+      height: 500px;
+      width: 500px;
+      overflow: auto;
+    }
+    .table {
+      border-collapse: collapse;
+    }
+    .table td, .table th {
+      border: 1px solid #ccc;
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+    .table thead {
+      position: sticky;
+      top: 0;
+      /* 高于固定列是td的z-index防止，td压盖th */
+      z-index: 2; 
+      background-color: #e3e5e8;
+      /* .5px这里还没有弄明白原因，如果写1px的话会显得很粗 */
+      box-shadow: 0 -1px #ccc, 0 .5px #ccc;
+    }
+    .table th {
+      position: relative;
+    }
+    .resizer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 5px;
+      cursor: col-resize;
+      user-select: none;
+    }
+
+    .resizer:hover, .resizing {
+      border-right: 2px solid blue;
+    }
+    /* 固定表头列 */
+    /* 固定表头 */
+    /* .table th {
+      
+    } */
+    .table thead th {
+      background: #e3e5e8;
+      box-shadow: 0 -1px #ccc, 0 .5px #ccc;
+    }
+    /* .table thead th {
+      box-shadow: 0 -1px #ccc, 0 1px #ccc, 1px 0 #ccc, -1px 0 #ccc;
+    } */
+    /* 固定列 */
+    .table tbody td {
+      background: #fff;
+    }
+    .table tr {
+      box-shadow: -1px 0 red;
+    }
+
+    .table thead th:first-child,
+    .table thead th:last-child {
+      z-index: 2;
+    }
+
+    .table tbody td:first-child,
+    .table tbody td:last-child {
+      z-index: 1;
+    }
+
+    .table thead th:first-child,
+    .table tbody td:first-child {
+      left: 0;
+    }
+
+    .table thead th:last-child,
+    .table tbody td:last-child {
+      /* 注意这里时1px，不是0，因为table与父容器之间有1px间隙，设置为0时会出现轻微的移动 */
+      right: 1px;
+    }
+
+    .table thead th:first-child,
+    .table thead th:last-child,
+    .table tbody td:first-child,
+    .table tbody td:last-child{
+      position: sticky;
+      filter: drop-shadow(1px 0 0 #ccc) drop-shadow(-1px 0 0 #ccc);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <table class="table" id="resizeMe">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  
+  <!-- 创建表格 -->
+  <script>
+    const thead = document.getElementById('thead')
+    const thr = document.createElement('tr')
+
+    const tbody = document.getElementById('tbody')
+    // 表头
+    for (let i = 0; i < 12; i++) {
+      const th = document.createElement('th')
+      th.innerText = `column ${i + 1}`
+      thr.appendChild(th)
+    }
+    thead.appendChild(thr)
+    // 多表头
+    // const thr2 = document.createElement('tr')
+    // for (let i = 0; i < 6; i++) {
+    //   const th = document.createElement('th')
+    //   th.innerText = `column ${i + 1}`
+    //   th.colSpan = 2
+    //   thr2.appendChild(th)
+    // }
+    // thead.appendChild(thr2)
+
+    for (let i = 0; i < 24; i++) {
+      const tbr = document.createElement('tr')
+      for (let j = 0; j < 12; j++) {
+        const td = document.createElement('td')
+        td.innerText = `内容 ${i + 1}-${j + 1}`
+        tbr.appendChild(td)
+      }
+      tbody.appendChild(tbr)
+    }
+  </script>
+  <!-- 实现拖动大小 -->
+  <script>
+    const createResizableColumn = function (col, resizer) {
+      let x = 0;
+      let w = 0;
+      const mouseDownHandler = function (e) {
+        x = e.clientX;
+        const styles = window.getComputedStyle(col);
+        w = parseInt(styles.width, 10);
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+        resizer.classList.add('resizing');
+      };
+
+      const mouseMoveHandler = function (e) {
+        const dx = e.clientX - x;
+        col.style['min-width'] = `${w + dx}px`;
+      };
+      const mouseUpHandler = function () {
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+        resizer.classList.remove('resizing');
+      };
+      resizer.addEventListener('mousedown', mouseDownHandler);
+    };
+    const table = document.getElementById('resizeMe');
+    // Query all headers
+    const cols = table.querySelectorAll('th');
+    [].forEach.call(cols, function (col) {
+      // Create a resizer element
+      const resizer = document.createElement('div');
+      resizer.classList.add('resizer');
+      // Set the height
+      resizer.style.height = `${table.offsetHeight}px`;
+      // Add a resizer element to the column
+      col.appendChild(resizer);
+      // Will be implemented in the next section
+      createResizableColumn(col, resizer);
+    });
+  </script>
+</body>
+</html>

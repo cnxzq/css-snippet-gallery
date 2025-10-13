@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html,body {
+      padding: 0;
+      margin: 0;
+    }
+    #container {
+      width: 500px;
+      margin: 50px auto;
+    }
+    #container > img {
+      display: block;
+      margin-bottom: 20px;
+      width: 100%;
+      height: auto;
+    }
+    #container > img:hover {
+      cursor: zoom-in;
+    }
+    @keyframes face-in {
+      /* 直接使用透明度动画也很不错，还简单，避免了js中的很多计算 */
+      /* from { opacity: 0; }
+      to { opacity: 1; } */
+      from {background-color: rgba(0,0,0,.0);}
+      to {background-color: rgba(0,0,0,.45);}
+    }
+    @keyframes face-out {
+      /* from { opacity: 1; }
+      to { opacity: 0; } */
+      from {background-color: rgba(0,0,0,.45);}
+      to {background-color: rgba(0,0,0,.0);}
+    }
+    .zoom-wrap {
+      position: fixed;
+      top: 0;
+      height: 100vh;
+      width: 100vw;
+      background-color: rgba(0,0,0,.45);
+      cursor: zoom-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation-name: face-in;
+      animation-duration: .5s;
+      overflow: hidden;
+    }
+    .zoom-wrap.close {
+      animation-name: face-out;
+      animation-fill-mode: forwards;
+    }
+    .zoom-wrap > img {
+      /* css实现充满宽高自适应方式，配合动画中的opacity，减少大量计算
+      height: 100%;
+      width: 100%;
+      object-fit: contain; */
+      position: absolute;
+      transform: scale(1) translateX(0) translateY(0);
+      transition: transform .5s;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <script src="./index.js"></script>
+  <script>
+    const container = document.getElementById('container')
+    const fragment = document.createDocumentFragment()
+    const images = ['./images/1.jpg', './images/2.jpg','./images/3.jpg','./images/4.jpg','./images/5.jpg']
+    images.forEach((image) => {
+      const img = document.createElement('img')
+      img.src = image
+      fragment.appendChild(img)
+    })
+    container.appendChild(fragment)
+    zoomImg(container)
+  </script>
+</body>
+</html>
